@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Container Query Example</title>
+
+  <style>
+    /* reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+      color: #111;
+    }
+
+    .example-wrap {
+      display: grid;
+      gap: 24px;
+    }
+
+    /* 공통 카드 */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #ddd;
+    }
+
+    /* =========================
+      1. Nameless Query
+    ========================= */
+
+    .nameless-container {
+      container-type: inline-size;
+      resize: horizontal;
+      overflow: auto;
+      min-width: 280px;
+      max-width: 100%;
+    }
+
+    .nameless-box {
+      padding: 20px;
+      background: #e9eefc;
+      border-radius: 12px;
+      transition: .3s;
+    }
+
+    @container (width > 600px) {
+      .nameless-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #c8f7dc;
+      }
+    }
+
+    /* =========================
+      2. Named Container
+    ========================= */
+
+    .named-container {
+      container: my-container / inline-size;
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    .named-item {
+      display: grid;
+      gap: 12px;
+    }
+
+    .named-thumb {
+      height: 140px;
+      background: #ccc;
+      border-radius: 12px;
+    }
+
+    @container my-container (width > 600px) {
+      .named-item {
+        grid-template-columns: 200px 1fr;
+        align-items: center;
+      }
+    }
+
+    /* =========================
+      3. Style Query
+    ========================= */
+
+    .style-container {
+      container-name: theme-box;
+      container-type: normal;
+
+      --responsive: true;
+
+      padding: 24px;
+      border-radius: 16px;
+      background: #222;
+    }
+
+    .style-text {
+      color: #fff;
+    }
+
+    @container theme-box style(--responsive:true) {
+      .style-text {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+    }
+
+    /* =========================
+      4. Multiple Query
+    ========================= */
+
+    .multi-container {
+      container: multi-box / inline-size;
+
+      --light: true;
+
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    .multi-box {
+      padding: 20px;
+      border-radius: 12px;
+      background: #ddd;
+      transition: .3s;
+    }
+
+    @container (width > 600px) and style(--light:true) {
+      .multi-box {
+        background: #ffe08a;
+        transform: scale(1.02);
+      }
+    }
+
+    /* =========================
+      5. Nested Query
+    ========================= */
+
+    .outer-container {
+      container-type: inline-size;
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    .inner-container {
+      container-name: dark-box;
+      container-type: normal;
+
+      --dark: false;
+
+      padding: 20px;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+
+    .nested-box {
+      padding: 20px;
+      border-radius: 12px;
+      background: #ddd;
+    }
+
+    @container (width > 800px) {
+
+      @container dark-box style(--dark:false) {
+
+        .nested-box {
+          background: #9fd3ff;
+          font-size: 22px;
+          font-weight: bold;
+        }
+
+      }
+
+    }
+
+    /* =========================
+      6. Multiple Containers
+    ========================= */
+
+    .multi-target {
+      container: my-container / inline-size;
+
+      --dark: true;
+
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    .multi-target-box {
+      padding: 20px;
+      border-radius: 12px;
+      background: #eee;
+      transition: .3s;
+    }
+
+    @container my-container (width > 600px),
+    style(--dark:true) {
+
+      .multi-target-box {
+        background: #222;
+        color: #fff;
+      }
+    }
+
+    /* demo title */
+    .title {
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="example-wrap">
+    <!-- 1 -->
+    <section class="card">
+      <h2 class="title">1. Nameless Query</h2>
+
+      <div class="nameless-container">
+        <div class="nameless-box">
+          <span>Container Width Responsive</span>
+          <strong>600px 이상</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="card">
+      <h2 class="title">2. Named Container</h2>
+
+      <div class="named-container">
+        <div class="named-item">
+          <div class="named-thumb"></div>
+
+          <div>
+            <h3>Named Container Layout</h3>
+            <p>600px 이상이면 2열 레이아웃으로 변경됩니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="card">
+      <h2 class="title">3. Style Query</h2>
+
+      <div class="style-container">
+        <p class="style-text">
+          CSS Custom Property 기반 Style Query
+        </p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="card">
+      <h2 class="title">4. Multiple Query</h2>
+
+      <div class="multi-container">
+        <div class="multi-box">
+          width + style 조건 동시 적용
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="card">
+      <h2 class="title">5. Nested Query</h2>
+
+      <div class="outer-container">
+
+        <div class="inner-container">
+
+          <div class="nested-box">
+            Nested Container Query
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="card">
+      <h2 class="title">6. Multiple Containers</h2>
+
+      <div class="multi-target">
+
+        <div class="multi-target-box">
+          OR 조건으로 동작하는 Container Query
+        </div>
+
+      </div>
+    </section>
+  </div>
+</body>
+</html>
